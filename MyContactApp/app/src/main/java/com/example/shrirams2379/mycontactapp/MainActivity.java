@@ -1,5 +1,6 @@
 package com.example.shrirams2379.mycontactapp;
 
+import android.database.Cursor;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,9 +37,9 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void addData (View v) {
-        boolean ifInsertedName = myDbyDb.insertData(editName.getText().toString());
-        boolean ifInsertedAge = myDb.insertData(editAge.getText().toString());
-        boolean ifInsertedPhone = myDb.insertData(editPhone.getText().toString());
+        boolean isInsertedName = myDb.insertData(editName.getText().toString());
+        boolean isInsertedAge = myDb.insertData(editAge.getText().toString());
+        boolean isInsertedPhone = myDb.insertData(editPhone.getText().toString());
 
         if (isInsertedName && isInsertedAge && isInsertedPhone == true){
            Log.d("MyContact", "Data insertion successful");
@@ -53,6 +54,26 @@ public class MainActivity extends ActionBarActivity {
             //Create toast message to user indicating data inserted incorrectly
         }
     }
+
+    public void viewData(View v){
+        Cursor res = myDb.getAllData();
+        if (res.getCount() == 0) {
+            showMessage("Error", "No data found in database");
+            return;
+        }
+        StringBuffer buffer = new StringBuffer();
+        //setup look with cursor moveToNext method
+        // append each COL to buffer
+        // use getString method
+
+        showMessage ("Data", buffer.toString());
+    }
+
+
+
+    private void showMessage(String error, String s) {
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
