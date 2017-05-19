@@ -20,6 +20,7 @@ public class MainActivity extends ActionBarActivity {
     EditText editName;
     EditText editAge;
     EditText editPhone;
+    EditText editSearch;
     Button btnAddData;
 
 
@@ -32,7 +33,8 @@ public class MainActivity extends ActionBarActivity {
 
         editName = (EditText) findViewById(R.id.editText_name);
         editAge = (EditText) findViewById(R.id.editText_age);
-        editPhone = (EditText) findViewById(R.id.editText_Phone);
+        editPhone = (EditText) findViewById(R.id.editText_phone);
+        editSearch = (EditText) findViewById(R.id.editText_search);
 
     }
 
