@@ -1,8 +1,10 @@
 package com.example.shrirams2379.mycontactapp;
 
+import android.app.AlertDialog;
 import android.database.Cursor;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,14 +16,13 @@ import android.widget.Toast;
 import java.util.logging.Logger;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     DatabaseHelper myDb;
     EditText editName;
     EditText editAge;
     EditText editPhone;
     EditText editSearch;
-    Button btnAddData;
 
 
     @Override
@@ -39,14 +40,12 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void addData (View v) {
-        boolean isInsertedName = myDb.insertData(editName.getText().toString());
-        boolean isInsertedAge = myDb.insertData(editAge.getText().toString());
-        boolean isInsertedPhone = myDb.insertData(editPhone.getText().toString());
+        boolean isInsertedName = myDb.insertData(editName.getText().toString(), editAge.getText().toString() , editPhone.getText().toString() );
 
-        if (isInsertedName && isInsertedAge && isInsertedPhone == true){
+
+        if (isInsertedName == true){
            Log.d("MyContact", "Data insertion successful");
-            Toast.makeText(getApplicationContext(), "Data insertion sucessful", Toast.LENGTH_LONG).show();
-
+            Toast.makeText(getApplicationContext(), "Data insertion successful", Toast.LENGTH_LONG).show();
             //Create toast message to user indicating data inserted correctly
         }
         else{
@@ -61,9 +60,22 @@ public class MainActivity extends ActionBarActivity {
         Cursor res = myDb.getAllData();
         if (res.getCount() == 0) {
             showMessage("Error", "No data found in database");
+            Log.d("My Contact", "No data found in database");
             return;
         }
         StringBuffer buffer = new StringBuffer();
+        if(res != null){
+            res.moveToFirst();
+            for(int i = 0; i<res.getCount(); i++){
+                for(int j=0; j<res.getColumnCount(); j++){
+                    buffer.append(res.getString(j) + "\n");
+                }
+                buffer.append("\n");
+                res.moveToNext();
+            }
+            res.close();
+
+        }
         //setup look with cursor moveToNext method
         // append each COL to buffer
         // use getString method
@@ -73,10 +85,41 @@ public class MainActivity extends ActionBarActivity {
 
 
 
-    private void showMessage(String error, String s) {
+    private void showMessage(String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.show();
     }
 
-    @Override
+    public void searchData (View v) {
+        Cursor res = myDb.getAllData();
+        StringBuffer bufferSearch = new StringBuffer();
+        int count = 0;
+
+        if (res != null) {
+            res.moveToFirst();
+            for (int i = 0; i < res.getCount(); i++) {
+                for (int j = 0; j < res.getColumnCount(); j++) {
+                    if (res.getString(j).equals(editSearch.getText().toString())) {
+                        bufferSearch.append(res.getString(j) + "\n" + res.getString(j+1) + "\n" + res.getString(j+2) + "\n");
+                        count++;
+                    }
+                }
+                bufferSearch.append("\n");
+                res.moveToNext();
+            }
+            res.close();
+        }
+
+        if (count != 0) {
+            showMessage("SearchData", bufferSearch.toString());
+        } else {
+            showMessage("SearchData", "Not in database");
+        }
+
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -84,7 +127,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected( MenuItem item){
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -96,5 +139,10 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-}
+
+
+    }*/
+
+
+    }}
+
